@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benjamín Aballay | Portafolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #080b12;
+      color: #e2e8f0;
+    }
+    code, .tech-badge {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Navbar blur */
+    #navbar.scrolled {
+      background: rgba(8, 11, 18, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.08);
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glow underline for nav links */
+    .nav-link {
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transition: width 0.3s ease;
+      border-radius: 1px;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    /* Flashcard hover effect */
+    .flashcard {
+      background: linear-gradient(145deg, #111827, #0f172a);
+      border: 1px solid rgba(56, 189, 248, 0.08);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .flashcard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .flashcard:hover::before {
+      transform: scaleX(1);
+    }
+    .flashcard:hover {
+      border-color: rgba(56, 189, 248, 0.25);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -12px rgba(56, 189, 248, 0.15);
+    }
+    .flashcard:active {
+      transform: translateY(-2px);
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Modal box */
+    .modal-box {
+      background: linear-gradient(145deg, #111827, #0f172a);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 560px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .modal-overlay.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Tech badge pulse */
+    .tech-badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background: rgba(56, 189, 248, 0.06);
+      border: 1px solid rgba(56, 189, 248, 0.1);
+      color: #94a3b8;
+      transition: all 0.25s ease;
+    }
+    .tech-badge:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.25);
+      color: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    /* Section divider */
+    .section-divider {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      margin: 0 auto 1rem auto;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #080b12; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+    /* Contact icon links */
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.04);
+      border: 1px solid rgba(56, 189, 248, 0.08);
+      color: #cbd5e1;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .contact-link:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.2);
+      color: #f1f5f9;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#hero" class="text-lg font-bold gradient-text tracking-tight">&lt;BA /&gt;</a>
+      <ul class="flex items-center gap-8 text-sm font-medium text-slate-300">
+        <li><a href="#about" class="nav-link">Sobre mí</a></li>
+        <li><a href="#tech" class="nav-link">Tecnologías</a></li>
+        <li><a href="#projects" class="nav-link">Proyectos</a></li>
+        <li><a href="#contact" class="nav-link">Contacto</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section id="hero" class="min-h-screen flex items-center justify-center px-6 pt-16">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full text-xs font-medium tracking-wider uppercase text-sky-400 bg-sky-400/5 border border-sky-400/10">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+        Disponible para proyectos
+      </div>
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-tight">
+        Benjamín <span class="gradient-text">Aballay</span>
+      </h1>
+      <p class="mt-4 text-lg sm:text-xl font-medium text-sky-300/80">
+        Estudiante de Ingeniería Civil en Ciencia de Datos
+      </p>
+      <p class="mt-6 text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+        Estudiante de 5to año en la <span class="text-slate-200 font-medium">UTEM</span>. Apasionado por el
+        <span class="text-sky-300">Machine Learning</span>,
+        <span class="text-sky-300">Computer Vision</span> y la
+        <span class="text-sky-300">automatización</span>.
+        Me encanta resolver problemas complejos optimizando recursos,
+        desarrollar en entornos Linux (Arch) y cacharrear con hardware y modelos locales.
+      </p>
+      <div class="mt-8 flex items-center justify-center gap-4">
+        <a href="#projects" class="px-6 py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-indigo-500 text-white transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-sky-500/20">
+          Ver proyectos
+        </a>
+        <a href="#contact" class="px-6 py-3 rounded-xl text-sm font-semibold border border-slate-700 text-slate-300 transition-all hover:border-sky-400/40 hover:text-white">
+          Contacto
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="about" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase text-sky-400/70 mb-3">Sobre mí</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">Conoce un poco más</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">5to Año</h3>
+          <p class="mt-2 text-sm text-slate-400">Ingeniería Civil en Ciencia de Datos — UTEM</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354.348.01.657.303.657.657v0c0 .355-.186.676-.401.959-.221.29-.349.634-.349 1.003 0 1.036 1.007 1.875 2.25 1.875s2.25-.84 2.25-1.875c0-.369-.128-.713-.349-1.003-.215-.283-.401-.604-.401-.959v0c0-.354.288-.648.643-.657a48.39 48.39 0 004.163-.3 48.15 48.15 0 00-.315-4.907.656.656 0 01.658-.663v0c.355 0 .676.186.959.401.29.221.634.349 1.003.349 1.036 0 1.875-1.007 1.875-2.25s-.84-2.25-1.875-2.25c-.369 0-.713.128-1.003.349-.283.215-.604.401-.959.401v0a.656.656 0 01-.658-.663 48.04 48.04 0 01.315-4.907 48.39 48.39 0 01-4.163.301.64.64 0 01-.643-.643v0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">Linux + Arch</h3>
+          <p class="mt-2 text-sm text-slate-400">Entorno diario con optimización y control total</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/60 text-center">
+          <div class="w-12 h-12 mx-auto mb-4 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">ML & CV</h3>
+          <p class="mt-2 text-sm text-slate-400">Apasionado por modelos locales y automatización</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TECHNOLOGIES ========== -->
+  <section id="tech" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase text-sky-400/70 mb-3">Stack</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">Tecnologías</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+        <span class="tech-badge">Python</span>
+        <span class="tech-badge">Machine Learning</span>
+        <span class="tech-badge">Computer Vision</span>
+        <span class="tech-badge">YOLO</span>
+        <span class="tech-badge">OpenCV</span>
+        <span class="tech-badge">Web Scraping</span>
+        <span class="tech-badge">APIs</span>
+        <span class="tech-badge">Discord.py</span>
+        <span class="tech-badge">SQL</span>
+        <span class="tech-badge">Linux</span>
+        <span class="tech-badge">ROCm</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PROJECTS ========== -->
+  <section id="projects" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase text-sky-400/70 mb-3">Portafolio</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">Proyectos</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="flashcard rounded-2xl p-6" data-modal="modal1">
+          <div class="w-12 h-12 mb-4 rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 flex items-center justify-center text-sky-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">Red Neuronal de Especies Marinas</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">
+            Modelo de Computer Vision para identificar especies marinas de Chile.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="flashcard rounded-2xl p-6" data-modal="modal2">
+          <div class="w-12 h-12 mb-4 rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 flex items-center justify-center text-sky-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">Extractor y Procesador de Datos</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">
+            Pipeline de recolección de datos no estructurados de la web.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="flashcard rounded-2xl p-6" data-modal="modal3">
+          <div class="w-12 h-12 mb-4 rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/20 flex items-center justify-center text-sky-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white">Bot de Discord</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">
+            Aplicación interactiva en tiempo real para usuarios.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MODALS ========== -->
+
+  <!-- Modal 1 -->
+  <div id="modal1" class="modal-overlay">
+    <div class="modal-box">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Red Neuronal de Especies Marinas</h3>
+        <button class="close-modal p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-5">
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Qué se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Modelo de Computer Vision para identificar especies marinas de Chile.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Cómo se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Entrenamiento de un modelo de detección manejando recolección de datasets y preprocesamiento de imágenes.
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 flex items-center gap-3">
+        <a href="https://github.com/benjaminaballay" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-indigo-500 text-white transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-sky-500/20">
+          Ver en GitHub
+        </a>
+        <button class="close-modal px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2 -->
+  <div id="modal2" class="modal-overlay">
+    <div class="modal-box">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Extractor y Procesador de Datos</h3>
+        <button class="close-modal p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-5">
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Qué se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Pipeline de recolección de datos no estructurados de la web.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Cómo se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Uso de técnicas de Web Scraping para extraer, limpiar y tabular información útil.
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 flex items-center gap-3">
+        <a href="https://github.com/benjaminaballay" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-indigo-500 text-white transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-sky-500/20">
+          Ver en GitHub
+        </a>
+        <button class="close-modal px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3 -->
+  <div id="modal3" class="modal-overlay">
+    <div class="modal-box">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Bot de Discord</h3>
+        <button class="close-modal p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="space-y-5">
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Qué se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Aplicación interactiva en tiempo real para usuarios.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-sm font-semibold tracking-wider uppercase text-sky-400 mb-2">¿Cómo se hizo?</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Desarrollo backend manejando eventos asíncronos y consumo de APIs.
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 flex items-center gap-3">
+        <a href="https://github.com/benjaminaballay" target="_blank" rel="noopener noreferrer" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-sky-500 to-indigo-500 text-white transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-sky-500/20">
+          Ver en GitHub
+        </a>
+        <button class="close-modal px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CONTACT ========== -->
+  <section id="contact" class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase text-sky-400/70 mb-3">Contacto</p>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white">Conectemos</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:benjamin.aballay@example.com" class="contact-link">
+          <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+          Correo
+        </a>
+        <a href="https://linkedin.com/in/benjaminaballay" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/benjaminaballay" target="_blank" rel="noopener noreferrer" class="contact-link">
+          <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="py-8 px-6 border-t border-slate-800/50">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-slate-500">
+        &copy; 2026 Benjamín Aballay
+      </p>
+      <p class="text-xs text-slate-600">
+        Hecho con <span class="text-sky-400">&lt;/&gt;</span> desde Chile
+      </p>
+    </div>
+  </footer>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ---- Navbar background on scroll ----
+      const navbar = document.getElementById('navbar');
+      let lastScroll = 0;
+
+      function updateNavbar() {
+        if (window.scrollY > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        lastScroll = window.scrollY;
+      }
+
+      window.addEventListener('scroll', updateNavbar, { passive: true });
+      updateNavbar();
+
+      // ---- Smooth scroll for nav links (enhancement) ----
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href');
+          if (targetId && targetId.startsWith('#')) {
+            const target = document.querySelector(targetId);
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // ---- Modals ----
+      const overlays = document.querySelectorAll('.modal-overlay');
+      const body = document.body;
+
+      function openModal(id) {
+        const overlay = document.getElementById(id);
+        if (!overlay) return;
+        overlay.classList.add('open');
+        body.style.overflow = 'hidden';
+      }
+
+      function closeAllModals() {
+        overlays.forEach(o => o.classList.remove('open'));
+        body.style.overflow = '';
+      }
+
+      // Click on flashcard -> open modal
+      document.querySelectorAll('.flashcard').forEach(card => {
+        card.addEventListener('click', function () {
+          const modalId = this.dataset.modal;
+          if (modalId) openModal(modalId);
+        });
+      });
+
+      // Click on close buttons
+      document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', closeAllModals);
+      });
+
+      // Click on overlay background -> close
+      overlays.forEach(overlay => {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === this) closeAllModals();
+        });
+      });
+
+      // Escape key -> close
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAllModals();
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
